@@ -3,6 +3,7 @@
 #include "common.h"
 #include "debug.h"
 #include "vm.h"
+#include "compiler.h"
 
 VM vm;
 
@@ -39,7 +40,6 @@ static InterpretResult run () {
             double b = pop(); \
             double a = pop();\
             push(a op b); \
-
         } while (false);
     for(;;) {
 #ifndef DEBUG_TRACE_EXECUTION
@@ -89,13 +89,12 @@ static InterpretResult run () {
             
         }
     }
-#undef READ_BTYE
+#undef READ_BYTE
 #undef READ_CONSTANT
 #undef BINARY_OP
 } // End of run()
 
-InterpretResult interpret(Chunk* chunk) {
-    vm.chunk = chunk;
-    vm.ip = vm.chunk -> code; // We don't use local variables because another process may use it
-    return run();
+InterpretResult interpret(const char* source) {
+    compile(source);
+    return INTERPRET_OK;
 }

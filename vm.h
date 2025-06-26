@@ -26,7 +26,7 @@ void initVM();
 void freeVM();
 
 // Main entry point for the VM
-InterpretResult interpret(Chunk* chunk);
+InterpretResult interpret(const char* source);
 
 // The stack protocol supports two operations:
 void push(Value value);
