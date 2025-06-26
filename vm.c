@@ -42,16 +42,16 @@ static InterpretResult run () {
             push(a op b); \
         } while (false);
     for(;;) {
-#ifndef DEBUG_TRACE_EXECUTION
+#ifdef DEBUG_TRACE_EXECUTION
         printf("               ");
         for (Value* slot = vm.stack; slot < vm.stackTop; slot++){
             printf("[ ");
-            print Value(*slot);
+            printValue(*slot);
             printf(" ]");
         }
         printf("\n");
-        disassemebleInstruction(vm.chunk, (int) (vm.ip - vm.chunk-> code));
-        #endif
+        disassembleInstruction(vm.chunk, (int) (vm.ip - vm.chunk->code));
+#endif
         uint8_t instruction;
         switch (instruction = READ_BYTE()) {
             case OP_CONSTANT: {
@@ -95,6 +95,18 @@ static InterpretResult run () {
 } // End of run()
 
 InterpretResult interpret(const char* source) {
-    compile(source);
-    return INTERPRET_OK;
+    Chunk chunk;
+    initChunk(&chunk);
+    if (!compile(source, &chunk)) {
+        freeChunk(&chunk);
+        return INTERPRET_COMPILE_ERROR;
+    }
+
+    vm.chunk = &chunk;
+    vm.ip = vm.chunk -> code;
+
+    InterpretResult result = run();
+
+    freeChunk(&chunk);
+    return result;
 }
