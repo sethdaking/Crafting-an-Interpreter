@@ -36,7 +36,6 @@ static InterpretResult run () {
     #define READ_CONSTANT() (vm.chunk -> constants.values[READ_BYTE()])
     #define BINARY_OP(op) \
     do { \
-        
             double b = pop(); \
             double a = pop();\
             push(a op b); \
@@ -53,7 +52,8 @@ static InterpretResult run () {
         disassembleInstruction(vm.chunk, (int) (vm.ip - vm.chunk->code));
 #endif
         uint8_t instruction;
-        switch (instruction = READ_BYTE()) {
+        instruction = READ_BYTE();
+        switch (instruction) {
             case OP_CONSTANT: {
                 Value constant = READ_CONSTANT();
                 push(constant);
@@ -61,10 +61,8 @@ static InterpretResult run () {
                 printf("\n");
                 break;
             }
-            case OP_NEGATE: {
-                push(-pop());
-                break;
-            }
+            case OP_NEGATE: push(-pop()); break;
+            
             case OP_ADD: {
                 BINARY_OP(+);
                 break;
