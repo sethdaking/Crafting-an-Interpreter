@@ -2,6 +2,7 @@
 
 #include "chunk.h"
 #include "memory.h"
+#include "vm.h"
 
 
 // The chunk structure is used to hold the bytecode instructions
@@ -44,6 +45,8 @@ void writeChunk(Chunk* chunk, uint8_t byte, int line) {
 // This function adds a constant value to the chunk's constants array.
 // It appends the value to the constants array and returns the index of the newly added constant
 int addConstant(Chunk* chunk, Value value) {
+    push(value);
     writeValueArray(&chunk -> constants, value);
+    pop();
     return chunk -> constants.count -1;
 }
